@@ -33,6 +33,11 @@ describe "Set up two factor authentication", type: :feature do
       expect(page).to have_field(:code)
     end
 
+    it "does not display navigation elements" do
+      expect(page).to_not have_link("Locations")
+      expect(page).to_not have_link("Allow list")
+    end
+
     context "when navigating to another page" do
       before { visit root_path }
 
@@ -62,6 +67,11 @@ describe "Set up two factor authentication", type: :feature do
 
       it "redirects the user to the admin app" do
         expect(page).to have_current_path(super_admin_organisations_path)
+      end
+
+      it "does display navigation elements" do
+        expect(page).to have_link("Locations")
+        expect(page).to have_link("Allow list")
       end
     end
 

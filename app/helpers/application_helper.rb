@@ -16,4 +16,8 @@ module ApplicationHelper
   def infer_page_title
     safe_join([content_for(:page_title), SITE_CONFIG["default_page_title"]].reject(&:nil?), " - ")
   end
+
+  def user_2fa_authenticated?
+    request.env["warden"].session(:user)[TwoFactorAuthentication::NEED_AUTHENTICATION]==false
+  end
 end
