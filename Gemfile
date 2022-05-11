@@ -8,7 +8,7 @@ git_source(:github) do |repo_name|
 end
 
 gem "aws-sdk-route53", "~> 1.62.0"
-gem "aws-sdk-s3", "~> 1.113.2"
+gem "aws-sdk-s3", "~> 1.114.0"
 gem "cancancan"
 gem "devise", "~> 4.8.1"
 gem "devise_invitable", "~> 2.0.6"
@@ -16,7 +16,7 @@ gem "devise_zxcvbn", "~> 6.0.0"
 gem "google-apis-drive_v3"
 gem "govuk_design_system_formbuilder"
 gem "httparty", "~> 0.20.0"
-gem "mysql2", "~> 0.5.2"
+gem "mysql2", "~> 0.5.4"
 gem "net-imap", require: false
 gem "net-pop", require: false
 gem "net-smtp", require: false
