@@ -59,6 +59,10 @@ class LocationsController < ApplicationController
     end
   end
 
+  def download_locations_upload_template
+    send_file "public/locations_upload_template.csv", disposition: "inline"
+  end
+
   def bulk_upload
     @upload_form = UploadForm.new
   end
@@ -70,6 +74,8 @@ class LocationsController < ApplicationController
     else
       @parent_organisation = current_organisation
       BulkUpload::BulkUpload.add_location_data(@upload_form.data, @parent_organisation)
+      @new_locations = @parent_organisation.locations.select(&:new_record?)
+      @new_ips_total = @new_locations.flat_map(&:ips).count
       @parent_organisation.validate
     end
   end
@@ -80,8 +86,10 @@ class LocationsController < ApplicationController
 
     @parent_organisation = current_organisation
     BulkUpload::BulkUpload.add_location_data(data, @parent_organisation)
+    @locations = @parent_organisation.locations.select(&:new_record?)
+    @ips_count = @locations.flat_map(&:ips).count
     @parent_organisation.save!
-    redirect_to(ips_path, notice: "Successfully uploaded locations")
+    redirect_to(ips_path, notice: "Upload complete. You have saved #{@locations.count} new locations and #{@ips_count} new IP addresses")
   rescue ActiveRecord::RecordInvalid
     redirect_to(ips_path, flash: { error: "Uploading data failed. Please try again." })
   rescue StandardError => e
