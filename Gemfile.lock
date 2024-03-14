@@ -70,24 +70,24 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     ansi (1.5.0)
     ast (2.4.2)
-    aws-eventstream (1.2.0)
-    aws-partitions (1.805.0)
-    aws-sdk-core (3.180.3)
-      aws-eventstream (~> 1, >= 1.0.2)
+    aws-eventstream (1.3.0)
+    aws-partitions (1.896.0)
+    aws-sdk-core (3.191.3)
+      aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.651.0)
-      aws-sigv4 (~> 1.5)
+      aws-sigv4 (~> 1.8)
       jmespath (~> 1, >= 1.6.1)
-    aws-sdk-kms (1.71.0)
-      aws-sdk-core (~> 3, >= 3.177.0)
+    aws-sdk-kms (1.77.0)
+      aws-sdk-core (~> 3, >= 3.191.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-route53 (1.78.0)
       aws-sdk-core (~> 3, >= 3.177.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.132.1)
-      aws-sdk-core (~> 3, >= 3.179.0)
+    aws-sdk-s3 (1.144.0)
+      aws-sdk-core (~> 3, >= 3.191.0)
       aws-sdk-kms (~> 1)
-      aws-sigv4 (~> 1.6)
-    aws-sigv4 (1.6.0)
+      aws-sigv4 (~> 1.8)
+    aws-sigv4 (1.8.0)
       aws-eventstream (~> 1, >= 1.0.2)
     backport (1.2.0)
     bcrypt (3.1.20)
@@ -251,7 +251,7 @@ GEM
       timeout
     net-smtp (0.3.3)
       net-protocol
-    nio4r (2.5.9)
+    nio4r (2.7.0)
     nokogiri (1.16.2)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
@@ -276,7 +276,7 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     public_suffix (5.0.3)
-    puma (6.3.1)
+    puma (6.4.2)
       nio4r (~> 2.0)
     racc (1.7.3)
     rack (2.2.8.1)
@@ -508,7 +508,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk-route53 (~> 1.78.0)
-  aws-sdk-s3 (~> 1.132.1)
+  aws-sdk-s3 (~> 1.144.0)
   bullet
   byebug
   cancancan
@@ -533,7 +533,7 @@ DEPENDENCIES
   notifications-ruby-client (~> 5.4.0)
   pagy (~> 7.0.10)
   pry
-  puma (~> 6.3)
+  puma (~> 6.4)
   rack-mini-profiler
   rack_session_access
   rails (~> 7.0.7)
