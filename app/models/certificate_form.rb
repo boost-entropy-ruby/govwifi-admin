@@ -13,9 +13,10 @@ class CertificateForm
   validates :file, presence: true
 
   validate :validate_x509
+  validate :validate_has_parent
 
   def save
-    return false unless valid?
+    return false if invalid?
 
     !!@certificate&.save
   end
@@ -23,13 +24,15 @@ class CertificateForm
 private
 
   def name_uniqueness
-    errors.add(:name, :taken) if Certificate.exists?(organisation:, name:)
+    return if @certificate.nil?
+
+    errors.add(:name, :taken) if @certificate.errors.of_kind?(:name, :taken)
   end
 
   def fingerprint_uniqueness
     return if @certificate.nil?
 
-    errors.add(:file, :taken) if Certificate.exists?(organisation:, fingerprint: @certificate.fingerprint)
+    errors.add(:file, :taken) if @certificate.errors.of_kind?(:fingerprint, :taken)
   end
 
   def validate_x509
@@ -38,19 +41,21 @@ private
     errors.add(:file, :invalid_certificate)
   end
 
+  def validate_has_parent
+    errors.add(:file, :no_parent) unless @certificate&.has_parent?
+  end
+
+  def content
+    @content ||= file&.read
+  end
+
   def parse_certificate
-    content = file&.read
     return if content.nil?
 
-    @certificate = Certificate.new(name:, organisation:)
-    @certificate.content = content
-    x509_certificate = OpenSSL::X509::Certificate.new(content)
-    @certificate.fingerprint = OpenSSL::Digest::SHA1.new(x509_certificate.to_der).to_s
-    @certificate.subject = x509_certificate.subject.to_s
-    @certificate.issuer = x509_certificate.issuer.to_s
-    @certificate.not_before = x509_certificate.not_before
-    @certificate.not_after = x509_certificate.not_after
-    @certificate.serial = x509_certificate.serial.to_s
+    @certificate = Certificate.parse_certificate(content)
+    @certificate.name = name
+    @certificate.organisation = organisation
+    @certificate.validate
   rescue OpenSSL::X509::CertificateError => e
     @x509_parsing_error = e.message
   end
