@@ -21,7 +21,6 @@ ENV \
   S3_EMAIL_DOMAINS_OBJECT_KEY='s3EmailDomainsObjectKey' \
   S3_ALLOWLIST_OBJECT_KEY='s3AllowlistObjectKey' \
   LOGGING_API_SEARCH_ENDPOINT='https://govwifi-logging-api.gov.uk/search/' \
-  S3_MOU_BUCKET='StubMouBucket' \
   GOOGLE_MAPS_PUBLIC_API_KEY='google-api-key' \
   OTP_SECRET_ENCRYPTION_KEY='otp-secret-key-must-be-at-least-32-bytes-long' \
   RR_DB_USER=root \
@@ -31,7 +30,8 @@ ENV \
   USER_DB_USER=root \
   USER_DB_PASS=root \
   USER_DB_HOST=wifi_user_db \
-  USER_DB_NAME=wifi_user_govwifi
+  USER_DB_NAME=wifi_user_govwifi \
+  LATEST_MOU_VERSION='123.3'
 
 WORKDIR /usr/src/app
 
