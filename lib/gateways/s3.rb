@@ -20,6 +20,10 @@ module Gateways
       bucket: ENV.fetch("S3_PUBLISHED_LOCATIONS_IPS_BUCKET"),
       key: ENV.fetch("S3_ALLOWLIST_OBJECT_KEY"),
     }.freeze
+    CERTIFICATES = {
+      bucket: ENV.fetch("S3_CERTIFICATES_BUCKET"),
+      key: ENV.fetch("S3_CERTIFICATES_OBJECT_KEY"),
+    }.freeze
 
     def initialize(bucket:, key:)
       @bucket = bucket
@@ -28,8 +32,9 @@ module Gateways
     end
 
     def write(data)
+      body = data.is_a?(String) ? StringIO.new(data) : data
       client.put_object(
-        body: StringIO.new(data),
+        body:,
         bucket:,
         key:,
       )
