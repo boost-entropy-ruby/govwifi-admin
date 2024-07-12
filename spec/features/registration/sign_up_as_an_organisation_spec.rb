@@ -1,8 +1,6 @@
 describe "Sign up for a GovWifi administrator account", type: :feature do
   let(:name) { "Sally" }
-  let(:email_gateway) { EmailGatewaySpy.new }
   before do
-    allow(Services).to receive(:email_gateway).and_return(email_gateway)
     Gateways::S3.new(**Gateways::S3::DOMAIN_REGEXP).write(
       "#{UseCases::Administrator::PublishEmailDomainsRegex::SIGNUP_ALLOWLIST_PREFIX_MATCHER}(gov\\.uk)$",
     )
@@ -19,6 +17,30 @@ describe "Sign up for a GovWifi administrator account", type: :feature do
       expect(page).to have_content(
         "A confirmation email has been sent to your email address.",
       )
+    end
+  end
+
+  context "with a non-gov email" do
+    let(:email) { "someone@google.com" }
+
+    before do
+      sign_up_for_account(email:)
+    end
+
+    it "tells me my email is not valid" do
+      expect(page).to have_content("Email address must be from a government or a public sector domain. If you're having trouble signing up, contact us.")
+    end
+  end
+
+  context "with a blank email" do
+    let(:email) { "" }
+
+    before do
+      sign_up_for_account(email:)
+    end
+
+    it "tells me my email is not valid" do
+      expect(page).to have_content("Email address must be from a government or a public sector domain. If you're having trouble signing up, contact us.")
     end
   end
 
@@ -69,22 +91,6 @@ describe "Sign up for a GovWifi administrator account", type: :feature do
 
       it "signs me in" do
         expect(page).to have_content "Sign out"
-      end
-    end
-
-    context "with a non-gov email" do
-      let(:email) { "someone@google.com" }
-
-      it "tells me my email is not valid" do
-        expect(page).to have_content("Email address must be from a government or a public sector domain. If you're having trouble signing up, contact us.")
-      end
-    end
-
-    context "with a blank email" do
-      let(:email) { "" }
-
-      it "tells me my email is not valid" do
-        expect(page).to have_content("Email address must be from a government or a public sector domain. If you're having trouble signing up, contact us.")
       end
     end
 
@@ -175,7 +181,7 @@ describe "Sign up for a GovWifi administrator account", type: :feature do
       sign_up_for_account
       update_user_details
       skip_two_factor_authentication
-      visit confirmation_email_link
+      visit Services.notify_gateway.last_confirmation_url
     end
 
     it_behaves_like "errors in form"

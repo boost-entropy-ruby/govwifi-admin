@@ -1,8 +1,5 @@
-require "support/notifications_service"
-
 describe "Resetting a password", type: :feature do
-  include_context "with a mocked notifications client"
-
+  include EmailHelpers
   it "displays the forgot password link at login" do
     visit root_path
     expect(page).to have_content("Forgot your password?")
@@ -26,7 +23,7 @@ describe "Resetting a password", type: :feature do
     end
 
     it "sends no email" do
-      expect(notifications).to be_empty
+      it_did_not_send_any_emails
     end
   end
 
@@ -44,7 +41,11 @@ describe "Resetting a password", type: :feature do
     end
 
     it "resends the confirm email" do
-      expect(last_notification_type).to eq "confirm"
+      expect(Services.notify_gateway.last_email_parameters).to include(
+        personalisation: { confirmation_url: include(user_confirmation_path) },
+        reference: "confirmation_email",
+        template_id: "confirmation_email_template",
+      )
     end
   end
 
@@ -62,7 +63,11 @@ describe "Resetting a password", type: :feature do
     end
 
     it "sends a reset password email" do
-      expect(last_notification_type).to eq "reset"
+      expect(Services.notify_gateway.last_email_parameters).to include(
+        personalisation: { reset_url: include(edit_user_password_path) },
+        reference: "reset_password_email",
+        template_id: "reset_password_email_template",
+      )
     end
   end
 
@@ -73,11 +78,13 @@ describe "Resetting a password", type: :feature do
       visit new_user_password_path
       fill_in "Enter your email address", with: user.email
       click_on "Send me reset password instructions"
-      visit(last_notification_link)
+      visit(Services.notify_gateway.last_reset_password_url)
     end
 
     it "sends an https link" do
-      expect(URI(last_notification_link).scheme).to eq("https")
+      expect(Services.notify_gateway.last_email_parameters).to include(
+        personalisation: { reset_url: include("https://") },
+      )
     end
 
     it "redirects the user to the edit password page" do

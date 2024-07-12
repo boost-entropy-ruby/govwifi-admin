@@ -12,10 +12,8 @@ def update_user_details(
   service_email: "admin@gov.uk",
   organisation_name: "Org 1"
 )
-  return if Services.email_gateway.not_sent?
 
-  visit confirmation_email_link
-
+  visit Services.notify_gateway.last_confirmation_url
   select organisation_name, from: "Organisation name"
 
   fill_in "Service email", with: service_email
@@ -31,7 +29,7 @@ def skip_two_factor_authentication
 end
 
 def confirmation_email_link
-  Services.email_gateway.last_confirmation_url
+  Services.notify_gateway.last_confirmation_url
 end
 
 def sign_in_user(user, pass_through_two_factor: true)

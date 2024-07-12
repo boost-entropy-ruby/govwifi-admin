@@ -1,13 +1,11 @@
-require "support/notifications_service"
-
 describe "Locking a user account", type: :feature do
-  include_context "with a mocked notifications client"
-
   let(:correct_password) { "rupaul 9232 !!foo" }
   let(:incorrect_password) { "incorrectpassword" }
   let(:user) { create(:user, password: correct_password) }
 
-  before { visit new_user_session_path }
+  before do
+    visit new_user_session_path
+  end
 
   context "when they login ten consecutive times with the wrong password" do
     before do
@@ -30,16 +28,12 @@ describe "Locking a user account", type: :feature do
       expect(page).to have_link "Admin"
     end
 
-    it "triggers a notification to be sent" do
-      expect(notifications.count).to eq 1
-    end
-
     it "sends an unlock email" do
-      expect(last_notification_type).to eq "unlock"
-    end
-
-    it "sends an unlock link" do
-      expect(last_notification_link).to include(user_unlock_path)
+      expect(Services.notify_gateway.last_email_parameters).to include(
+        personalisation: { unlock_url: include(user_unlock_path) },
+        reference: "unlock_account",
+        template_id: "unlock_account_template",
+      )
     end
   end
 end

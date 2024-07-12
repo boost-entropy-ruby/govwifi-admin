@@ -1,10 +1,10 @@
 describe "POST /users/invitation", type: :request do
   let(:user) { create(:user, :with_2fa, organisations: [organisation]) }
   let(:organisation) { create(:organisation) }
-  let(:email_gateway) { spy }
+  let(:notify_gateway) { spy }
 
   before do
-    allow(Services).to receive(:email_gateway).and_return(email_gateway)
+    allow(Services).to receive(:notify_gateway).and_return(notify_gateway)
     https!
     login_as(user, scope: :user)
   end
@@ -21,8 +21,8 @@ describe "POST /users/invitation", type: :request do
     end
 
     it "invites a user" do
-      expect(email_gateway).to have_received(:send_email)
-      .with(include(template_id: GOV_NOTIFY_CONFIG["invite_email"]["template_id"])).once
+      expect(notify_gateway).to have_received(:send_email)
+      .with(include(template_id: NotifyTemplates.template(:invite_email))).once
     end
 
     it "ignores provided organisation_id" do
